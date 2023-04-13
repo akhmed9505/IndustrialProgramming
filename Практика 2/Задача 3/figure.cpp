@@ -1,46 +1,58 @@
+#include "figure.h"
 #include <iostream>
 #include <cmath>
-#include "figure.h";
-
 using namespace std;
 
-int main() {
-	setlocale(0, "");
-	Figure mas[3];
-	double x1, x2, x3, x4, y1, y2, y3, y4;
-	for (int i = 0; i < 3; i++) {
-		cout << "Введите координаты сначала по x затем по y для фигуры №" << i + 1 << " через пробел: " << endl;
-		cin >> x1 >> x2 >> x3 >> x4 >> y1 >> y2 >> y3 >> y4;
-		mas[i].figure(x1, x2, x3, x4, y1, y2, y3, y4);
-	}
-	for (int i = 0; i < 3; i++) {
-		mas[i].show(i + 1);
+void figure::define(float X1, float X2, float X3, float X4, float Y1, float Y2, float Y3, float Y4)
+{
+	x1 = X1;
+	x2 = X2;
+	x3 = X3;
+	x4 = X4;
+	y1 = Y1;
+	y2 = Y2;
+	y3 = Y3;
+	y4 = Y4;
 
-		if (mas[i].is_plug() == true)
-			cout << "Данная фигура является прямоугольником" << endl;
-		else
-			cout << "Данная фигура не является прямоугольником" << endl;
+	P = dist(X1, Y1, X2, Y2) + dist(X2, Y2, X3, Y3) + dist(X3, Y3, X4, Y4) + dist(X4, Y4, X1, Y1);
+	S = 0.5 * sin(angleBP(X1, Y1, X3, Y3, X2, Y2, X4, Y4) / (180 / PI)) * dist(X1, Y1, X3, Y3) * dist(X2, Y2, X4, Y4);
+}
 
-		if (mas[i].is_square() == true)
-			cout << "Данная фигура является квадратом" << endl;
-		else
-			cout << "Данная фигура не является квадратом" << endl;
+void figure::show()
+{
+	cout << "(" << x1 << " " << y1 << ")(" << x2 << " " << y2 << ")(" << x3 << " " << y3 << ")(" << x4 << " " << y4 << ") P = " << P << " S = " << S << "\n";
+}
+bool figure::is_prug()
+{
+	return (angleBP(x1, y1, x2, y2, x1, y1, x4, y4) == 90 &&
+		angleBP(x2, y2, x1, y1, x2, y2, x3, y3) == 90 &&
+		angleBP(x3, y3, x2, y2, x3, y3, x4, y4) == 90 &&
+		angleBP(x4, y4, x1, y1, x4, y4, x3, y3) == 90);
+}
+bool figure::is_square()
+{
+	return ((angleBP(x1, y1, x2, y2, x1, y1, x4, y4) == 90 &&
+		angleBP(x2, y2, x1, y1, x2, y2, x3, y3) == 90 &&
+		angleBP(x3, y3, x2, y2, x3, y3, x4, y4) == 90 &&
+		angleBP(x4, y4, x1, y1, x4, y4, x3, y3) == 90) &&
 
-		if (mas[i].is_romb() == true)
-			cout << "Данная фигура является ромбом" << endl;
-		else
-			cout << "Данная фигура не является ромбом" << endl;
-
-		if (mas[i].is_in_circle() == true)
-			cout << "Данную фигуру можно вписать в окружность" << endl;
-		else
-			cout << "Данную фигуру нельзя вписать в окружность" << endl;
-
-		if (mas[i].is_out_circle() == true)
-			cout << "В данную фигуру можно вписать окружность" << endl;
-		else
-			cout << "В данную фигуру нельзя вписать окружность" << endl;
-	}
-
-	return 0;
+		(dist(x1, y1, x2, y2) == dist(x2, y2, x3, y3) &&
+			dist(x1, y1, x2, y2) == dist(x3, y3, x4, y4) &&
+			dist(x1, y1, x2, y2) == dist(x4, y4, x1, y1))
+		);
+}
+bool figure::is_romb()
+{
+	return ((dist(x1, y1, x2, y2) == dist(x2, y2, x3, y3) &&
+		dist(x1, y1, x2, y2) == dist(x3, y3, x4, y4) &&
+		dist(x1, y1, x2, y2) == dist(x4, y4, x1, y1)));
+}
+bool figure::is_in_circle()
+{
+	return (dist(x1, y1, x2, y2) + dist(x3, y3, x4, y4) == dist(x2, y2, x3, y3) + dist(x4, y4, x1, y1));
+}
+bool figure::is_out_circle()
+{
+	return ((angleBP(x1, y1, x2, y2, x1, y1, x4, y4) + angleBP(x3, y3, x2, y2, x3, y3, x4, y4) == 180) &&
+		(angleBP(x2, y2, x1, y1, x2, y2, x3, y3) + angleBP(x4, y4, x1, y1, x4, y4, x3, y3) == 180));
 }
